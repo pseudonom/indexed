@@ -11,7 +11,8 @@
 -- TODO: figure out a meaningful way for indexed monads to transform indexed 
 -- monads
 ----------------------------------------------------------------------------
+{-# LANGUAGE PolyKinds #-}
 module Control.Monad.Indexed.Trans where
 
-class IxMonadTrans t where
+class IxMonadTrans (t :: (* -> *) -> j -> j -> * -> *) where
   ilift :: Monad m => m a -> t m i i a
