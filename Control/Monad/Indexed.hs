@@ -9,30 +9,31 @@
 -- Portability :  portable
 --
 ----------------------------------------------------------------------------
-module Control.Monad.Indexed 
-	( IxFunctor(..)
-	, IxPointed(..)
-	, IxApplicative(..)
-	, IxMonad(..)
-	, IxMonadZero(..)
-	, IxMonadPlus(..)
-	, ijoin, (>>>=), (=<<<)
-	, iapIxMonad
-	) where
+{-# LANGUAGE PolyKinds #-}
+module Control.Monad.Indexed
+  ( IxFunctor(..)
+  , IxPointed(..)
+  , IxApplicative(..)
+  , IxMonad(..)
+  , IxMonadZero(..)
+  , IxMonadPlus(..)
+  , ijoin, (>>>=), (=<<<)
+  , iapIxMonad
+  ) where
 
 import Data.Functor.Indexed
 
-class IxApplicative m => IxMonad m where
-	ibind :: (a -> m j k b) -> m i j a -> m i k b
+class IxApplicative m => IxMonad (m :: l -> l -> * -> *) where
+  ibind :: (a -> m j k b) -> m i j a -> m i k b
 
-ijoin :: IxMonad m => m i j (m j k a) -> m i k a 
+ijoin :: IxMonad m => m i j (m j k a) -> m i k a
 ijoin = ibind id
 
 infixr 1 =<<<
 infixl 1 >>>=
 
 (>>>=) :: IxMonad m => m i j a -> (a -> m j k b) -> m i k b
-m >>>= k = ibind k m 
+m >>>= k = ibind k m
 
 (=<<<) :: IxMonad m => (a -> m j k b) -> m i j a -> m i k b
 (=<<<) = ibind
@@ -40,8 +41,8 @@ m >>>= k = ibind k m
 iapIxMonad :: IxMonad m => m i j (a -> b) -> m j k a -> m i k b
 iapIxMonad f x = f >>>= \ f' -> x >>>= \x' -> ireturn (f' x')
 
-class IxMonad m => IxMonadZero m where
-	imzero :: m i j a
+class IxMonad m => IxMonadZero (m :: k -> k -> * -> *) where
+  imzero :: m i j a
 
-class IxMonadZero m => IxMonadPlus m where
-	implus :: m i j a -> m i j a -> m i j a
+class IxMonadZero m => IxMonadPlus (m :: k -> k -> * -> *) where
+  implus :: m i j a -> m i j a -> m i j a

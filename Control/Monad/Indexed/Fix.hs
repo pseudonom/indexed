@@ -9,12 +9,12 @@
 -- Portability :  portable
 --
 ----------------------------------------------------------------------------
+{-# LANGUAGE PolyKinds #-}
 module Control.Monad.Indexed.Fix
-	( IxMonadFix(..)
-	) where
+  ( IxMonadFix(..)
+  ) where
 
 import Control.Monad.Indexed
 
-class IxMonad m => IxMonadFix m where
-	imfix :: (a -> m i i a) -> m i i a
-
+class IxMonad m => IxMonadFix (m :: j -> j -> * -> *) where
+  imfix :: (a -> m i i a) -> m i i a

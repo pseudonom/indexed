@@ -14,5 +14,4 @@
 module Control.Monad.Indexed.Trans where
 
 class IxMonadTrans t where
-	ilift :: Monad m => m a -> t m i i a 
-
+  ilift :: Monad m => m a -> t m i i a
